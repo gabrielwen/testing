@@ -22,4 +22,4 @@ spec:
           volumes:
           - name: gcp-credentials
             secret:
-              secretName: cronjob-releasing-credentials
+              secretName: gcp-credentials
