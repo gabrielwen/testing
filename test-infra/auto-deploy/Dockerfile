@@ -157,4 +157,4 @@ ENV USER root
 COPY checkout.sh /usr/local/bin
 COPY init.sh /usr/local/bin
 
-ENTRYPOINT ["/user/local/bin/init.sh"]
+ENTRYPOINT ["/usr/local/bin/init.sh"]
