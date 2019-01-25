@@ -155,6 +155,8 @@ ENV USER root
 
 # Make both of these scripts generic and simple and use them to start deployments.
 COPY checkout.sh /usr/local/bin
+RUN chmod a+x /usr/local/bin/checkout.sh
 COPY init.sh /usr/local/bin
+RUN chmod a+x /usr/local/bin/init.sh
 
 ENTRYPOINT ["/usr/local/bin/init.sh"]
