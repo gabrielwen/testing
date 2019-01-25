@@ -2,8 +2,8 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: auto-deploy
-  clusterName: kubeflow-testing
-  namespace: kubeflow-test-infra
+  # clusterName: kubeflow-testing
+  # namespace: kubeflow-test-infra
 spec:
   # Daily at 10p
   schedule: "*/3 * * * *"

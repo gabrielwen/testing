@@ -28,6 +28,7 @@ python -m kubeflow.testing.create_kf_instance \
   --kubeflow_repo=${KF_DIR} \
   --apps_dir=${APPS_DIR} \
   --project=${PROJECT} \
-  --deployment_worker_cluster=${WORKER_CLUSTER}
+  --deployment_worker_cluster=${WORKER_CLUSTER} \
+  --oauth_file=gs://deployment-worker-data/kf-iap-oauth.gabrielwen-learning.yaml
 
 # TODO(gabrielwen): Push changes to app folders to git.
