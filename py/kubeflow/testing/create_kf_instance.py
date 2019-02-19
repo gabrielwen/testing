@@ -107,54 +107,54 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
             "--deployment=" + name, "--zone=" + args.zone], cwd=args.apps_dir)
 
   # Create a dummy kubeconfig in cronjob worker.
-  util.run(["gcloud", "container", "clusters", "get-credentials", args.deployment_worker_cluster,
-            "--zone", args.zone, "--project", args.project], cwd=args.apps_dir)
+  # util.run(["gcloud", "container", "clusters", "get-credentials", args.deployment_worker_cluster,
+  #           "--zone", args.zone, "--project", args.project], cwd=args.apps_dir)
 
-  app_dir = os.path.join(args.apps_dir, name)
-  kfctl = os.path.join(args.kubeflow_repo, "scripts", "kfctl.sh")
-  ks_app_dir = os.path.join(app_dir, "ks_app")
-  util.run([kfctl, "init", name, "--project", args.project, "--zone", args.zone,
-            "--platform", "gcp", "--skipInitProject", "true"], cwd=args.apps_dir
-           )
+  # app_dir = os.path.join(args.apps_dir, name)
+  # kfctl = os.path.join(args.kubeflow_repo, "scripts", "kfctl.sh")
+  # ks_app_dir = os.path.join(app_dir, "ks_app")
+  # util.run([kfctl, "init", name, "--project", args.project, "--zone", args.zone,
+  #           "--platform", "gcp", "--skipInitProject", "true"], cwd=args.apps_dir
+  #          )
 
-  labels = {}
-  with open(os.path.join(app_dir, "kf_app.yaml"), "w") as hf:
-    app = {
-      "labels": {
-        "GIT_LABEL": git_describe,
-        "PURPOSE": "kf-test-cluster",
-      },
-    }
-    if args.timestamp:
-      app["labels"]["SNAPSHOT_TIMESTAMP"] = args.timestamp
-    if args.job_name:
-      app["labels"]["DEPLOYMENT_JOB"] = args.job_name
-    labels = app.get("labels", {})
-    yaml.dump(app, hf)
+  # labels = {}
+  # with open(os.path.join(app_dir, "kf_app.yaml"), "w") as hf:
+  #   app = {
+  #     "labels": {
+  #       "GIT_LABEL": git_describe,
+  #       "PURPOSE": "kf-test-cluster",
+  #     },
+  #   }
+  #   if args.timestamp:
+  #     app["labels"]["SNAPSHOT_TIMESTAMP"] = args.timestamp
+  #   if args.job_name:
+  #     app["labels"]["DEPLOYMENT_JOB"] = args.job_name
+  #   labels = app.get("labels", {})
+  #   yaml.dump(app, hf)
 
-  label_args = []
-  for k, v in labels.items():
-    # labels can only take as input alphanumeric characters, hyphens, and
-    # underscores. Replace not valid characters with hyphens.
-    val = v.lower().replace("\"", "")
-    val = re.sub(r"[^a-z0-9\-_]", "-", val)
-    label_args.append("{key}={val}".format(key=k.lower(), val=val))
+  # label_args = []
+  # for k, v in labels.items():
+  #   # labels can only take as input alphanumeric characters, hyphens, and
+  #   # underscores. Replace not valid characters with hyphens.
+  #   val = v.lower().replace("\"", "")
+  #   val = re.sub(r"[^a-z0-9\-_]", "-", val)
+  #   label_args.append("{key}={val}".format(key=k.lower(), val=val))
 
-  util.run([kfctl, "generate", "all"], cwd=app_dir)
-  util.run(["ks", "generate", "seldon", "seldon"], cwd=ks_app_dir)
+  # util.run([kfctl, "generate", "all"], cwd=app_dir)
+  # util.run(["ks", "generate", "seldon", "seldon"], cwd=ks_app_dir)
 
-  env = {}
-  env.update(os.environ)
-  env.update(oauth_info)
-  # kfctl apply all might break during cronjob invocation when depending
-  # components are not ready. Make it retry several times should be enough.
-  kfctl_apply_with_retry(kfctl, app_dir, env)
+  # env = {}
+  # env.update(os.environ)
+  # env.update(oauth_info)
+  # # kfctl apply all might break during cronjob invocation when depending
+  # # components are not ready. Make it retry several times should be enough.
+  # kfctl_apply_with_retry(kfctl, app_dir, env)
 
-  logging.info("Annotating cluster with labels: %s", str(label_args))
-  util.run(["gcloud", "container", "clusters", "update", name,
-            "--zone", args.zone,
-            "--update-labels", ",".join(label_args)],
-           cwd=app_dir)
+  # logging.info("Annotating cluster with labels: %s", str(label_args))
+  # util.run(["gcloud", "container", "clusters", "update", name,
+  #           "--zone", args.zone,
+  #           "--update-labels", ",".join(label_args)],
+  #          cwd=app_dir)
 
 if __name__ == "__main__":
   main()
