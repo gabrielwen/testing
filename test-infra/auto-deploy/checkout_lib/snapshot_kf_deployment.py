@@ -184,6 +184,7 @@ def main():
                                        args.base_name, [
     n for n in range(args.max_cluster_num)])
 
+  cluster_num = 4
   logging.info("Deploying to %d", cluster_num)
 
   job_name = checkout_util.get_job_name(args.job_labels)
